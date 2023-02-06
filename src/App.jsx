@@ -2,25 +2,35 @@ import "./style.css";
 import React, { useEffect, useState } from "react";
 
 function App() {
+  const STARTING_TIME = 5;
   const [text, setText] = useState("");
-  const [timeRemaining, setTimeRemainig] = useState(10);
-  const [isActive, setIsActive] = useState(false);
-  const [count, setCount] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(STARTING_TIME);
+  const [isTimeRunning, setIsTimeRunning] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
 
   const countDownTimer = () => {
-    if (isActive && timeRemaining > 0) {
+    if (isTimeRunning && timeRemaining > 0) {
       setTimeout(() => {
-        setTimeRemainig((time) => time - 1);
-        console.log(setTimeRemainig);
+        setTimeRemaining((time) => time - 1);
+        console.log(setTimeRemaining);
       }, 1000);
     } else if (timeRemaining == 0) {
-      setIsActive(false);
+      setIsTimeRunning(false);
+
+      setWordCount(countNumberOfWord(text));
     }
   };
 
+  function startGame() {
+    setIsTimeRunning(true);
+    setText("");
+    setTimeRemaining(STARTING_TIME);
+    setWordCount(0);
+  }
+
   useEffect(() => {
     countDownTimer();
-  }, [timeRemaining, isActive]);
+  }, [timeRemaining, isTimeRunning]);
 
   function handleChange(e) {
     const { value } = e.target;
@@ -28,23 +38,23 @@ function App() {
   }
 
   function countNumberOfWord(text) {
-    var count = 0;
-    var split = text.trim().split(" ");
-    for (let i = 0; i < split.length; i++) {
-      if (split[i] != "") {
-        count++;
-      }
-    }
-    return console.log(count);
+    const split = text.trim().split(" ");
+    return split.filter((item) => item !== "").length;
   }
   // console.log(text);
   return (
     <div>
       <h1>How fast do you type?</h1>
-      <textarea onChange={handleChange} value={text} />
+      <textarea
+        disabled={isTimeRunning == 0}
+        onChange={handleChange}
+        value={text}
+      />
       <h4>Time remaining: {timeRemaining}</h4>
-      <button onClick={() => setIsActive(true)}>START</button>
-      <h1>Word Count: ???</h1>
+      <button disabled={isTimeRunning} onClick={() => startGame()}>
+        START
+      </button>
+      <h1>Word Count: {wordCount}</h1>
     </div>
   );
 }
