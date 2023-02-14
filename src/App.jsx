@@ -1,5 +1,5 @@
 import "./style.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 function App() {
   const STARTING_TIME = 5;
@@ -7,6 +7,7 @@ function App() {
   const [timeRemaining, setTimeRemaining] = useState(STARTING_TIME);
   const [isTimeRunning, setIsTimeRunning] = useState(false);
   const [wordCount, setWordCount] = useState(0);
+  const inputRef = useRef(null);
 
   const countDownTimer = () => {
     if (isTimeRunning && timeRemaining > 0) {
@@ -26,6 +27,8 @@ function App() {
     setText("");
     setTimeRemaining(STARTING_TIME);
     setWordCount(0);
+    inputRef.current.disabled = false;
+    inputRef.current.focus();
   }
 
   useEffect(() => {
@@ -49,6 +52,7 @@ function App() {
         disabled={isTimeRunning == 0}
         onChange={handleChange}
         value={text}
+        ref={inputRef}
       />
       <h4>Time remaining: {timeRemaining}</h4>
       <button disabled={isTimeRunning} onClick={() => startGame()}>
